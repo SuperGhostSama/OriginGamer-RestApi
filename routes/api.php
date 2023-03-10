@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\CategoriesController;
+use App\Http\Controllers\ResetPasswordController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,7 +17,7 @@ use App\Http\Controllers\CategoriesController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
+//Authentification
 Route::controller(AuthController::class)->group(function () {
     Route::post('login', 'login');
     Route::post('register', 'register');
@@ -24,6 +25,17 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('refresh', 'refresh');
 });
 
+//Forgot-Reset password 
+Route::group(['controller' => ResetPasswordController::class], function (){
+    // Request password reset link
+    Route::post('forgot-password', 'sendResetLinkEmail')->middleware('guest')->name('password.email');
+    // Reset password
+    Route::post('reset-password', 'resetPassword')->middleware('guest')->name('password.update');
+
+    Route::get('reset-password/{token}', function (string $token) {
+         return $token;
+     })->middleware('guest')->name('password.reset');
+});
 
 // Categories
 Route::get('/categories', [CategoriesController::class, 'index']);
