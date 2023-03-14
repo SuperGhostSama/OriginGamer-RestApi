@@ -34,10 +34,11 @@ class RolesController extends Controller
         $roleName = $request->name;
 
         if(!$user->hasRole($roleName)){
-            return response()->json(['Message' => "This user doesn't have ({$roleName}) role!"]);
+            return response()->json(['Message' => "This user doesn't have {$roleName} role!"]);
         }
-        
-        $user->removeRole($roleName);
+
+        // $user->removeRole($roleName);
+        $user->syncRoles(['user']);
 
         return response()->json([
             '=======' => "==================== Remove Role ====================",
