@@ -38,15 +38,19 @@ Route::group(['controller' => ResetPasswordController::class], function (){
 });
 
 // Categories
-Route::get('/categories', [CategoriesController::class, 'index']);
-Route::post('/categories', [CategoriesController::class, 'store']);
-Route::get('/categories/{category}', [CategoriesController::class, 'show']);
-Route::put('/categories/{category}', [CategoriesController::class, 'update']);
-Route::delete('/categories/{category}', [CategoriesController::class, 'destroy']);
+Route::group(['controller' => CategoriesController::class,'middleware'=>'auth:api'], function () {
+    Route::get('/categories','index')->middleware(['permission:view category']);;
+    Route::post('/categories','store')->middleware(['permission:add category']);
+    Route::get('/categories/{category}','show')->middleware(['permission:view category']);;
+    Route::put('/categories/{category}','update')->middleware(['permission:edit category']);
+    Route::delete('/categories/{category}','destroy')->middleware(['permission:delete category']);
+});
 
 //Products
-Route::get('/products', [ProductsController::class, 'index']);
-Route::get('/products/{product}', [ProductsController::class, 'show']);
-Route::post('/products', [ProductsController::class, 'store']);
-Route::put('/products/{product}', [ProductsController::class, 'update']);
-Route::delete('/products/{product}', [ProductsController::class, 'destroy']);
+Route::group(['controller' => ProductsController::class,'middleware'=>'auth:api'], function () {
+    Route::get('/products','index');
+    Route::get('/products/{product}','show');
+    Route::post('/products','store')->middleware(['permission:add product']);
+    Route::put('/products/{product}','update')->middleware(['permission:edit All product|edit My product']);
+    Route::delete('/products/{product}','destroy')->middleware(['permission:delete All product|delete My product']);
+});

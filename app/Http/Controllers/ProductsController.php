@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Product;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ProductsController extends Controller
 {
@@ -26,8 +27,9 @@ class ProductsController extends Controller
             'content' => 'required',
             'category_id' => 'required|exists:categories,id',
         ]);
-
-        $product = Product::create($validatedData);
+        $user = Auth::user();
+        $product = Product::create($validatedData + ['user_id' => $user->id]);
+    
 
         return response()->json(['message' => 'Product created successfully.', 'data' => $product], 201);
     }
@@ -42,13 +44,23 @@ class ProductsController extends Controller
             'category_id' => 'required|exists:categories,id',
         ]);
 
+        $user = Auth::user();
+        if(!$user->can('edit All product') && $user->id != $product->user_id){
+            return response()->json(['message' => "Can't update a product that isn't yours!"]);
+        }
+
         $product->update($validatedData);
 
         return response()->json(['message' => 'Product updated successfully.', 'data' => $product], 200);
     }
 
     public function destroy(Product $product)
-    {
+    {   
+        $user = Auth::user();
+        if(!$user->can('delete All product') && $user->id != $product->user_id){
+            return response()->json(['message' => "Can't delete a product that isn't yours!"]);
+        }
+
         $product->delete();
 
         return response()->json(['message' => 'Product deleted successfully.'], 200);
