@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\CategoriesController;
+use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ResetPasswordController;
 
 /*
@@ -62,3 +63,11 @@ Route::group(['controller' => ProductsController::class,'middleware'=>'auth:api'
     Route::put('/products/{product}','update')->middleware(['permission:edit All product|edit My product']);
     Route::delete('/products/{product}','destroy')->middleware(['permission:delete All product|delete My product']);
 });
+
+//Permissions
+Route::group(['controller' => PermissionController::class,'middleware'=>'auth:api'], function () {
+Route::post('assign-permission/{role}','assignPermissionToRole')->middleware('permission:assign permission');
+Route::delete('remove-permission/{role}','removePermissionFromRole')->middleware('permission:assign permission');
+});
+
+//Roles
