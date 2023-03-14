@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\ResetPasswordController;
@@ -23,6 +24,7 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('register', 'register');
     Route::post('logout', 'logout');
     Route::post('refresh', 'refresh');
+    
 });
 
 //Forgot-Reset password 
@@ -36,6 +38,12 @@ Route::group(['controller' => ResetPasswordController::class], function (){
          return $token;
      })->middleware('guest')->name('password.reset');
 });
+// Profile
+Route::group(['controller' => ProfileController::class,'middleware'=>'auth:api'], function () {
+    Route::put('user/{user}','updateProfile')->middleware('permission:edit my profile|edit all profile');
+    Route::delete('user/{user}','deleteProfile')->middleware('permission:delete my profile|delete all profile');
+});
+
 
 // Categories
 Route::group(['controller' => CategoriesController::class,'middleware'=>'auth:api'], function () {
