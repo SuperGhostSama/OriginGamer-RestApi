@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
 
@@ -34,5 +35,13 @@ class CategoriesController extends Controller
         $category->delete();
 
         return response()->json(['message' => 'Category deleted successfully.'], 200);
+    }
+
+    public function filterByCategory($category_name)
+    {
+        $category = Category::where('category', $category_name)->firstOrFail();
+        $products = Product::where('category_id', $category->id)->get();
+        return response()->json($products);
+
     }
 }

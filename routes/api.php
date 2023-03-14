@@ -76,3 +76,6 @@ Route::group(['controller' => RolesController::class,'middleware'=>'auth:api'], 
     Route::post('assign-role/{id}', 'assignRole')->middleware('permission:assign role');
     Route::post('remove-role/{id}', 'removeRole')->middleware('permission:assign role');
 });
+
+//Filter By Category Name
+Route::get('filter/{category_name}', [CategoriesController::class, 'filterByCategory']);
