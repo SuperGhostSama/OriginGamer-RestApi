@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\RolesController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\CategoriesController;
@@ -71,3 +72,7 @@ Route::delete('remove-permission/{role}','removePermissionFromRole')->middleware
 });
 
 //Roles
+Route::group(['controller' => RolesController::class,'middleware'=>'auth:api'], function () {
+    Route::post('assign-role/{id}', 'assignRole')->middleware('permission:assign role');
+    Route::post('remove-role/{id}', 'removeRole')->middleware('permission:assign role');
+});
